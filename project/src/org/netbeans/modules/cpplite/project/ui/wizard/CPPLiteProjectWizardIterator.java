@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.prefs.Preferences;
+import javax.swing.JComponent;
 import javax.swing.event.ChangeListener;
 import org.netbeans.api.templates.TemplateRegistration;
 import org.netbeans.modules.cpplite.project.BuildConfiguration;
@@ -54,7 +55,11 @@ import org.openide.util.NbBundle.Messages;
     iconBase="org/netbeans/modules/cpplite/project/resources/project.gif",
     description="CPPLiteProjectDescription.html"
 )
-@Messages("template_cpplite=Lightweight C/C++ Project")
+@Messages({"template_cpplite=Lightweight C/C++ Project",
+           "CAP_ProjectPath=Location",
+           "CAP_Editor=Editor",
+           "CAP_Build=Build"
+})
 public class CPPLiteProjectWizardIterator implements WizardDescriptor.InstantiatingIterator<WizardDescriptor> {
 
     private final Panel[] panels = new Panel[] {
@@ -80,6 +85,16 @@ public class CPPLiteProjectWizardIterator implements WizardDescriptor.Instantiat
     public void initialize(WizardDescriptor wizard) {
         this.wizard = wizard;
         this.idx = 0;
+        int i = 0;
+        String[] captions = new String[]{
+            Bundle.CAP_ProjectPath(),
+            Bundle.CAP_Editor(),
+            Bundle.CAP_Build()
+        };
+        for (Panel p : panels) {
+            ((JComponent) p.getComponent()).putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, i++);
+            ((JComponent) p.getComponent()).putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, captions);
+        }
     }
 
     @Override
@@ -185,7 +200,7 @@ public class CPPLiteProjectWizardIterator implements WizardDescriptor.Instantiat
         
     }
 
-    private static class EditorPanelImpl implements WizardDescriptor.Panel<WizardDescriptor> {
+    private static class EditorPanelImpl implements WizardDescriptor.FinishablePanel<WizardDescriptor> {
 
         private Editor panel;
 
@@ -226,10 +241,15 @@ public class CPPLiteProjectWizardIterator implements WizardDescriptor.Instantiat
         @Override
         public void removeChangeListener(ChangeListener l) {
         }
+
+        @Override
+        public boolean isFinishPanel() {
+            return true;
+        }
         
     }
 
-    private static class BuildPanelImpl implements WizardDescriptor.Panel<WizardDescriptor> {
+    private static class BuildPanelImpl implements WizardDescriptor.FinishablePanel<WizardDescriptor> {
 
         private Build panel;
 
@@ -269,6 +289,11 @@ public class CPPLiteProjectWizardIterator implements WizardDescriptor.Instantiat
 
         @Override
         public void removeChangeListener(ChangeListener l) {
+        }
+
+        @Override
+        public boolean isFinishPanel() {
+            return true;
         }
         
     }

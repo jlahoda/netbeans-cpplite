@@ -66,9 +66,10 @@ public class CPPLiteProjectPathPanel extends javax.swing.JPanel {
     }
 
     private void pathUpdated() {
-        FileObject projectDirectory = FileUtil.toFileObject(new File(path.getText()));
+        String text = path.getText();
+        FileObject projectDirectory = FileUtil.toFileObject(new File(text));
         
-        valid = projectDirectory != null && projectDirectory.isFolder();
+        valid = projectDirectory != null && projectDirectory.isFolder() && !text.isEmpty();
         cs.fireChange();
     }
 
@@ -140,7 +141,7 @@ public class CPPLiteProjectPathPanel extends javax.swing.JPanel {
     private javax.swing.JTextField path;
     // End of variables declaration//GEN-END:variables
 
-    public static class PanelImpl implements WizardDescriptor.Panel<WizardDescriptor> {
+    public static class PanelImpl implements WizardDescriptor.FinishablePanel<WizardDescriptor> {
 
         private CPPLiteProjectPathPanel panel;
 
@@ -186,6 +187,11 @@ public class CPPLiteProjectPathPanel extends javax.swing.JPanel {
         public void removeChangeListener(ChangeListener l) {
             getComponent().removeChangeListener(l);
         }
-        
+
+        @Override
+        public boolean isFinishPanel() {
+            return true;
+        }
+
     }
 }

@@ -36,6 +36,7 @@ import org.netbeans.spi.project.ProjectFactory2;
 import org.netbeans.spi.project.ProjectState;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.NbPreferences;
 import org.openide.util.lookup.Lookups;
@@ -139,7 +140,7 @@ public class CPPLiteProject implements Project {
         public ProjectManager.Result isProject2(FileObject projectDirectory) {
             Preferences prefs = getRootPreferences(projectDirectory, false);
             if (prefs != null && prefs.getBoolean(KEY_IS_PROJECT, false)) {
-                return new ProjectManager.Result(null);
+                return new ProjectManager.Result(ImageUtilities.image2Icon(ImageUtilities.loadImage("org/netbeans/modules/cpplite/project/resources/project.gif")));
             }
             return null;
         }

@@ -19,7 +19,9 @@
 package org.netbeans.modules.cpplite.project;
 
 import java.awt.Image;
+import javax.swing.Action;
 import org.netbeans.spi.project.ui.LogicalViewProvider;
+import org.netbeans.spi.project.ui.support.CommonProjectActions;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
@@ -69,5 +71,9 @@ public class LogicalViewProviderImpl implements LogicalViewProvider {
             return ImageUtilities.loadImage("org/netbeans/modules/cpplite/project/resources/projectOpen.gif");
         }
         
+        @Override
+        public Action[] getActions(boolean param) {
+            return CommonProjectActions.forType("org-netbeans-modules-cpplite"); // NOI18N
+        }
     }
 }
