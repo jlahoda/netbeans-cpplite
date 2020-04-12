@@ -16,10 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-@TemplateRegistration(folder = "Other", content = "CTemplate.c")
-@TemplateRegistration(folder = "Other", content = "CPPTemplate.cpp")
-@TemplateRegistration(folder = "Other", content = "HTemplate.h")
-@TemplateRegistration(folder = "Other", content = "HPPTemplate.hpp")
+@TemplateRegistrations({
+    @TemplateRegistration(folder = "Other", content = "CTemplate.c"),
+    @TemplateRegistration(folder = "Other", content = "CPPTemplate.cpp"),
+    @TemplateRegistration(folder = "Other", content = "HTemplate.h"),
+    @TemplateRegistration(folder = "Other", content = "HPPTemplate.hpp")
+})
 package org.netbeans.modules.cpplite.editor.file;
 
 import org.netbeans.api.templates.TemplateRegistration;
+import org.netbeans.api.templates.TemplateRegistrations;
