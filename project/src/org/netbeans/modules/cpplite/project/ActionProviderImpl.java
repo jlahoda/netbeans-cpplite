@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.netbeans.api.extexecution.ExecutionDescriptor;
 import org.netbeans.api.extexecution.ExecutionService;
 import org.netbeans.api.project.ProjectUtils;
+import org.netbeans.modules.cpplite.debugger.api.Debugger;
 import org.netbeans.modules.cpplite.project.runner.Runner;
 import org.netbeans.spi.project.ActionProvider;
 import org.openide.filesystems.FileUtil;
@@ -37,7 +38,9 @@ import org.openide.util.Lookup;
 public class ActionProviderImpl implements ActionProvider {
     private static final String[] SUPPORTED_ACTIONS = {
         COMMAND_BUILD,
-        COMMAND_REBUILD
+        COMMAND_REBUILD,
+        COMMAND_RUN,
+        COMMAND_DEBUG,
     };
 
     private final CPPLiteProject prj;
@@ -54,10 +57,14 @@ public class ActionProviderImpl implements ActionProvider {
     @Override
     public void invokeAction(String command, Lookup context) throws IllegalArgumentException {
         BuildConfiguration config = prj.getActiveBuildConfiguration();
-        List<List<String>> executablesFor = config.executablesFor(command);
-        String arg = executablesFor.stream().map(c -> quote(c.stream().map(p -> quote(p)).collect(Collectors.joining(" ")))).collect(Collectors.joining(" "));
         File module = InstalledFileLocator.getDefault().locate("modules/org-netbeans-modules-cpplite-project.jar", "org.netbeans.modules.cpplite.project", false);
         ExecutionService.newService(() -> {
+            if (COMMAND_DEBUG.equals(command)) {
+                List<List<String>> executablesFor = config.executablesFor(COMMAND_RUN);
+                return Debugger.startInDebugger(executablesFor.get(0));
+            }
+            List<List<String>> executablesFor = config.executablesFor(command);
+            String arg = executablesFor.stream().map(c -> quote(c.stream().map(p -> quote(p)).collect(Collectors.joining(" ")))).collect(Collectors.joining(" "));
             return new ProcessBuilder("java", "-classpath", module.getAbsolutePath(), Runner.class.getName(), arg).directory(FileUtil.toFile(prj.getProjectDirectory())).start();
         }, new ExecutionDescriptor(), ProjectUtils.getInformation(prj).getDisplayName() + " - " + command).run();
     }
@@ -68,6 +75,9 @@ public class ActionProviderImpl implements ActionProvider {
 
     @Override
     public boolean isActionEnabled(String command, Lookup context) throws IllegalArgumentException {
+        if (COMMAND_DEBUG.equals(command)) {
+            command = COMMAND_RUN;
+        }
         return prj.getActiveBuildConfiguration().executablesFor(command) != null;
     }
     
